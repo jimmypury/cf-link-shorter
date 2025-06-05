@@ -53,6 +53,15 @@ URL shortener service based on Cloudflare Worker and Cloudflare KV.
 - Cloudflare Worker
 - Cloudflare KV
 
+## To-Do
+
+- [ ] (Important) Add Cloudflare Workers Secrets for token storage.
+- [ ] (Important) Add rate limiting to prevent abuse.
+- [ ] Add more frontend features, such as link statistics.
+- [ ] Add domain authentication.
+- [ ] Add a custom domain feature for short links: different short codes for different domains.
+- [ ] Add a QR code generation feature. (WebUI only)
+
 ## License
 
 MIT
