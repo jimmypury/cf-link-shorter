@@ -1,4 +1,3 @@
-const TOKEN = "your_secret_token"; // Your authentication token
 const SHORT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Short code character set
 const SHORT_CODE_LENGTH = 6; // Short code length
 const GENERATE_MAX_TRY = 5; // Maximum attempts to generate a unique short code
@@ -39,16 +38,22 @@ export default {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL Shortener</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #f6f8fa; margin: 0; padding: 0; }
     .container { max-width: 400px; margin: 60px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px; }
     h2 { text-align: center; color: #333; }
     .container input[type="url"], .container input[type="text"], .container button { width: 100%; box-sizing: border-box; }
     input[type="url"], input[type="text"] { padding: 10px; margin: 16px 0; border: 1px solid #ccc; border-radius: 4px; }
-    button { padding: 10px; background: #0078e7; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
-    button:hover { background: #005bb5; }
+    button { padding: 10px; background: #ffb6c1; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #ffa8b9; }
     .result { margin-top: 24px; text-align: center; }
+    .result a { color: #ffb6c1; text-decoration: none; }
+    .result a:hover { text-decoration: underline; }
     .error { color: #d32f2f; margin-top: 16px; text-align: center; }
+    .footer { margin-top: 24px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 12px; }
+    .qrcode { margin: 20px auto; text-align: center; }
+    .qrcode canvas { margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -60,16 +65,21 @@ export default {
       <button type="submit">Generate Short URL</button>
     </form>
     <div class="result" id="result"></div>
+    <div class="qrcode" id="qrcode"></div>
     <div class="error" id="error"></div>
+    <div class="footer" id="site-footer"></div>
   </div>
   <script>
     const form = document.getElementById('shorten-form');
     const resultDiv = document.getElementById('result');
     const errorDiv = document.getElementById('error');
+    const qrcodeDiv = document.getElementById('qrcode');
+    document.getElementById('site-footer').innerHTML = '&copy; ' + new Date().getFullYear() + ' ' + window.location.hostname;    
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       resultDiv.textContent = '';
       errorDiv.textContent = '';
+      qrcodeDiv.innerHTML = '';
       const longUrl = document.getElementById('long-url').value.trim();
       const token = document.getElementById('token').value.trim();
       if (!longUrl || !token) return;
@@ -86,6 +96,14 @@ export default {
         const data = await res.json();
         const shortUrl = \`\${window.location.origin}/\${data.short}\`;
         resultDiv.innerHTML = \`Short URL: <a href="\${shortUrl}" target="_blank">\${shortUrl}</a>\`;
+        
+        const qr = new QRious({
+          element: document.createElement('canvas'),
+          value: shortUrl,
+          size: 200
+        });
+        qrcodeDiv.innerHTML = '';
+        qrcodeDiv.appendChild(qr.element);
       } catch (err) {
         errorDiv.textContent = err.message || 'Generation failed';
       }
@@ -105,8 +123,8 @@ export default {
     ) {
       try {
         const { url: longUrl, token } = await request.json();
-        if (!token || token !== TOKEN) {
-          return new Response("Unauthorized", { status: 401 });
+        if (!token || token !== env.short_link_token) {
+          return new Response("Unauthorized token", { status: 401 });
         }
         if (!longUrl || typeof longUrl !== "string") {
           return new Response("Invalid URL", { status: 400 });
@@ -146,7 +164,7 @@ export default {
             try {
               const u = new URL(body.url);
               shortCode = u.pathname.replace(/^\//, "");
-            } catch {}
+            } catch { }
           }
         } else if (url.searchParams.has("short") || url.searchParams.has("url")) {
           token = url.searchParams.get("token");
@@ -156,11 +174,11 @@ export default {
             try {
               const u = new URL(url.searchParams.get("url"));
               shortCode = u.pathname.replace(/^\//, "");
-            } catch {}
+            } catch { }
           }
         }
-        if (!token || token !== TOKEN) {
-          return new Response("Unauthorized", { status: 401 });
+        if (!token || token !== env.short_link_token) {
+          return new Response("Unauthorized token", { status: 401 });
         }
         if (!shortCode) {
           return new Response("Missing short code", { status: 400 });
@@ -188,7 +206,7 @@ export default {
       }
     }
     // Other requests
-    return new Response("Cloudflare Worker Short Link Service", {
+    return new Response("You should not be here...", {
       status: 200,
     });
   },

@@ -13,11 +13,13 @@ URL shortener service based on Cloudflare Worker and Cloudflare KV.
 
 ### 1. Deploy to Cloudflare Workers
 
-1. Create a Cloudflare Worker and bind a KV namespace (e.g., `short_link`).
-2. Upload the `worker.js` code.
-3. Bind the KV in the Worker's environment variables:
+1. Create a KV namespace (e.g., named `short_link`).
+2. Create a Cloudflare Worker and bind the KV namespace (e.g., `short_link`).
+3. Upload the `worker.js` code.
+4. Bind the KV to the Worker's environment variables:
    - Variable name: `short_link`
    - Bind to your KV namespace
+5. Create a Secret environment variable named `short_link_token`, set a secure token value for authentication.
 
 ### 2. Access the Service
 
@@ -55,12 +57,17 @@ URL shortener service based on Cloudflare Worker and Cloudflare KV.
 
 ## To-Do
 
-- [ ] (Important) Add Cloudflare Workers Secrets for token storage.
+- [x] (Important) Add Cloudflare Workers Secrets for token storage.
+- [x] Add a QR code generation feature. (WebUI only)
+- [x] Add a copyright footer.
+
+---------
+
+- [ ] (Important) Short links should be duplicated when the same long URL is submitted.
 - [ ] (Important) Add rate limiting to prevent abuse.
-- [ ] Add more frontend features, such as link statistics.
+- [ ] Add link statistics.
 - [ ] Add domain authentication.
 - [ ] Add a custom domain feature for short links: different short codes for different domains.
-- [ ] Add a QR code generation feature. (WebUI only)
 
 ## License
 
