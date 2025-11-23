@@ -1,0 +1,11 @@
+{
+  "name": "cf-link-shorter",
+  "compatibility_date": "2025-11-23",
+  "main": "worker.js",
+  "kv_namespaces": [
+    {
+      "binding": "short_link",
+      "id": "0a23dab7d70d47e4a6d8b005bbafa50f"
+    }
+  ]
+}
