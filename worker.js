@@ -1,4 +1,5 @@
-const SHORT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Short code character set
+const SHORT_CHARS =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Short code character set
 const SHORT_CODE_LENGTH = 6; // Short code length
 const GENERATE_MAX_TRY = 5; // Maximum attempts to generate a unique short code
 
@@ -11,7 +12,11 @@ function generateShortCode(length = SHORT_CODE_LENGTH) {
   return result;
 }
 
-async function generateUniqueShortCode(env, length = SHORT_CODE_LENGTH, maxTry = GENERATE_MAX_TRY) {
+async function generateUniqueShortCode(
+  env,
+  length = SHORT_CODE_LENGTH,
+  maxTry = GENERATE_MAX_TRY
+) {
   const kv = env.short_link; // KV variable mapping is short_link
   for (let i = 0; i < maxTry; i++) {
     const code = generateShortCode(length);
@@ -164,9 +169,12 @@ export default {
             try {
               const u = new URL(body.url);
               shortCode = u.pathname.replace(/^\//, "");
-            } catch { }
+            } catch {}
           }
-        } else if (url.searchParams.has("short") || url.searchParams.has("url")) {
+        } else if (
+          url.searchParams.has("short") ||
+          url.searchParams.has("url")
+        ) {
           token = url.searchParams.get("token");
           if (url.searchParams.has("short")) {
             shortCode = url.searchParams.get("short");
@@ -174,7 +182,7 @@ export default {
             try {
               const u = new URL(url.searchParams.get("url"));
               shortCode = u.pathname.replace(/^\//, "");
-            } catch { }
+            } catch {}
           }
         }
         if (!token || token !== env.short_link_token) {
