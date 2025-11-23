@@ -1,5 +1,5 @@
 {
-  "name": "cf-link-shorter",
+  "name": "short-link",
   "compatibility_date": "2025-11-23",
   "main": "worker.js",
   "kv_namespaces": [
